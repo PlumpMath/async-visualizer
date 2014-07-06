@@ -1,0 +1,54 @@
+body {
+}
+
+section {
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+section h2 {
+  max-width: 55rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+section .pure-g {
+  max-width: 55rem;
+  margin: 0 auto;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.discussion {
+  box-sizing: border-box;
+}
+.example-container {
+  padding: 0.5rem;
+  margin-top: 1rem;
+}
+
+.dot {
+  height: 0.9rem;
+  width: 0.9rem;
+  display: inline-block;
+  vertical-align: middle;
+  border-radius: 50%;
+  background-color: #ccc;
+}
+
+.dot.red {
+  background-color: #b0120a;
+}
+
+.buffer {
+  padding: 0.2rem;
+}
+.buffer.empty {
+  color: #999;
+  font-style: italic;
+}
+
+.buffer .dot {
+  margin: 0 0.1rem;
+}
