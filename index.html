@@ -13,7 +13,8 @@
           <h2>Channels</h2>
         </div>
       <div class="discussion-container pure-u-3-5">
-        <p>This is some text.</p>
+        <p>A channel is a lot like a pipe, but with a few unique properties. It takes objects from one side and passes through to the other. It has a few unique properties, though. A standard channel will halt the producer side if there is no receiver on the other end of the channel. Similarly, receivers will wait until they are provided with messages. This provides a kind of built-in backpressure.</p>
+        <p>To the right, you can add messages to a channel by pressing one of the buttons. It is passed through a channel to a listener defined below. How that listener works isn't super-important right now.</p>
 <pre><code>
 (go (loop []
   (show (&lt;! ch))
@@ -30,6 +31,13 @@
           <h2>Buffered Channels</h2>
         </div>
         <div class="discussion-container pure-u-3-5">
+          <p>It's possible to make a buffered channel, which is a channel that does not block the producing side. Some buffers will <em>never</em> block, but will lose messages when the buffer is full. There three kinds of buffers:</p>
+          <ul>
+            <li>A blocking buffer that behaves like an unbuffered channel when it is full. <code>(chan (buffer 3))</code></li>
+            <li>A sliding buffer, which will drop the oldest messages when the buffer is full. <code>(chan (sliding-buffer 3))</code></li>
+            <li>A dropping buffer, which will drop any new messages when the buffer is full. <code>(chan (dropping-buffer 3))</code></li>
+          </ul>
+          <p>To the right is an example of a sliding buffer.</p>
         </div>
         <div class="example-container example-two pure-u-2-5"></div>
       </div>
