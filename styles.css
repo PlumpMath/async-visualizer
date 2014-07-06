@@ -74,7 +74,7 @@ section .pure-g {
 .dots-enter {
   -webkit-transition: opacity 0.25s ease,
     -webkit-transform 0.25s ease;
-  -webkit-transform: scale(0);
+  -webkit-transform: translateX(-2rem);
   opacity: 0;
 }
 .dots-enter.dots-enter-active {
@@ -82,11 +82,16 @@ section .pure-g {
   opacity: 1;
 }
 
+
 .dots-leave {
   -webkit-transition: opacity 0.25s ease, -webkit-transform 0.25s ease;
   -webkit-transform: scale(1);
   opacity: 1;
   -webkit-animation: none !important;
+}
+
+.dots-leave.dots-leave-active:last-child {
+  -webkit-transform: translateX(2rem);
 }
 
 .dots-leave.dots-leave-active {
