@@ -50,51 +50,91 @@
    (dom/i #js { :className (str "dot " (name color)) } "")))
 
 (defn buffer [buf owner]
-  (reify
-    om/IRender
-    (render [_]
-            (css-transition-group
-             (clj->js { :className "buffer"
-                        :transitionName "dots"
-                        :children (map #(om/build color %) buf)})))))
+  (om/component
+   (css-transition-group
+    (clj->js { :className "buffer"
+               :transitionName "dots"
+               :children (reverse (map #(om/build color %) buf))}))))
 
 (defn channel [ch owner]
-  (reify
-    om/IRender
-    (render [_]
-            (dom/div #js { :className "channel" }
-                     (dom/div nil
-                              "Wating puts:" (om/build buffer (:puts ch)))
-                     (dom/div nil
-                              "Buffer:" (om/build buffer (:buf ch)))
-                     (dom/div nil
-                              "Waiting takes:" (om/build buffer (:takes ch)))))))
+  (om/component
+   (dom/div #js { :className "channel" }
+            (dom/div nil "P" (om/build buffer (:puts ch)))
+            (dom/div nil "B" (om/build buffer (:buf ch)))
+            (dom/div nil "T" (om/build buffer (:takes ch))))))
 
 (defn example-one [data owner]
   (reify
-    om/IRender
-    (render [_]
-      (let [ ch (:ch data)]
-        (dom/div #js { :className "example-container" }
-                 (dom/div #js { :className "text-center controls" }
+    om/IInitState
+    (init-state [_] { :result nil })
+    om/IWillMount
+    (will-mount [_]
+      (let [ch (:ch data)]
+        (go
+         (loop []
+           (om/set-state! owner :result (<! ch))
+           (recur)))))
+    om/IRenderState
+    (render-state [_ state]
+      (let [ ch (:ch data)
+             res (:result state)]
+        (dom/div #js { :className "example-root" }
+                 (dom/div #js { :className "controls" }
                           (dom/button
                            #js { :className "pure-button"
                                  :onClick (fn [_]
                                             (async/put! ch :red)
                                             (om/refresh! owner)) }
 
-                           (dom/code nil ">! ch " (om/build color :red))))
-                 (dom/div #js { :className "channel-container" }
-                          (om/build channel (reveal ch)))
-
-                 (dom/div #js { :className "text-center controls " }
+                           (dom/code nil ">! ch " (om/build color :red)))
+                          " "
                           (dom/button
                            #js { :className "pure-button"
                                  :onClick (fn [_]
-                                            (async/take! ch #(prn %))
+                                            (async/put! ch :blue)
                                             (om/refresh! owner))}
-                           (dom/code nil "<! ch"))))))))
+
+                           (dom/code nil ">! ch " (om/build color :blue))))
+                 (dom/div #js { :className "result" }
+                          (if (nil? res) "" (om/build color res))))))))
 
 (om/root example-one
-         (atom { :ch (chan (async/buffer 5)) })
+         (atom { :ch (chan)
+                 :result nil })
          { :target (js/document.querySelector ".example-one") })
+
+
+(defn example-two [data owner]
+  (om/component
+   (let [ ch (:ch data)]
+     (dom/div #js { :className "example-root" }
+              (dom/div #js { :className "controls" }
+                       (dom/button
+                        #js { :className "pure-button"
+                              :onClick (fn [_]
+                                         (async/put! ch :red)
+                                         (om/refresh! owner)) }
+
+                        (dom/code nil ">! ch " (om/build color :red)))
+                       " "
+                       (dom/button
+                        #js { :className "pure-button"
+                              :onClick (fn [_]
+                                         (async/put! ch :blue)
+                                         (om/refresh! owner))}
+
+                        (dom/code nil ">! ch " (om/build color :blue))))
+              (dom/div #js { :className "channel-container" }
+                       (om/build channel (reveal ch)))
+
+              (dom/div #js { :className "text-center controls " }
+                       (dom/button
+                        #js { :className "pure-button"
+                              :onClick (fn [_]
+                                         (async/take! ch #(prn %))
+                                         (om/refresh! owner))}
+                        (dom/code nil "<! ch")))))))
+
+(om/root example-two
+         (atom { :ch (chan (async/dropping-buffer 5)) })
+         { :target (js/document.querySelector ".example-two") })
