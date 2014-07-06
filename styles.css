@@ -22,17 +22,38 @@ section .pure-g {
   margin: 0 auto;
 }
 
+.discussion-container {
+  box-sizing: border-box;
+  padding-right: 1rem;
+}
+
 .text-center {
   text-align: center;
 }
 
-.discussion {
-  box-sizing: border-box;
+.example-root {
+  display: table;
+  width: 100%;
+}
+.example-root .controls {
+  display: table-cell;
+  width: 33%;
+  vertical-align: middle;
+}
+.example-root .channel-container {
+  display: table-cell;
+  width: 33%;
+  vertical-align: middle;
+  text-align: center;
+}
+.example-root .result-container {
+  display: table-cell;
+  width: 33%;
+  vertical-align: middle;
 }
 
-.example-root {
-  padding: 0.5rem;
-  margin-top: 1rem;
+.example-root .controls button {
+  margin-bottom: 0.2rem;
 }
 
 .dot {
@@ -59,8 +80,10 @@ section .pure-g {
 
 .buffer,
 .result {
-  padding: 0.2rem;
+  display: inline-block;
+  vertical-align: middle;
   font-size: 150%;
+  height: 1.6rem;
 }
 .buffer.empty {
   color: #999;
@@ -88,6 +111,7 @@ section .pure-g {
   -webkit-transform: scale(1);
   opacity: 1;
   -webkit-animation: none !important;
+  position: absolute;
 }
 
 .dots-leave.dots-leave-active:last-child {
