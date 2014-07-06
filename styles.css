@@ -29,7 +29,8 @@ section .pure-g {
 .discussion {
   box-sizing: border-box;
 }
-.example-container {
+
+.example-root {
   padding: 0.5rem;
   margin-top: 1rem;
 }
@@ -47,12 +48,17 @@ section .pure-g {
   background-color: #b0120a;
 }
 
+.dot.blue {
+  background-color: #3f51b5;
+}
+
 .dot.sleeping {
   -webkit-animation: sleep-anim 2s infinite;
   -webkit-animation-timing-function: ease;
 }
 
-.buffer {
+.buffer,
+.result {
   padding: 0.2rem;
   font-size: 150%;
 }
@@ -68,7 +74,7 @@ section .pure-g {
 .dots-enter {
   -webkit-transition: opacity 0.25s ease,
     -webkit-transform 0.25s ease;
-  -webkit-transform: scale(0);
+  -webkit-transform: translateX(-2rem);
   opacity: 0;
 }
 .dots-enter.dots-enter-active {
@@ -76,11 +82,16 @@ section .pure-g {
   opacity: 1;
 }
 
+
 .dots-leave {
   -webkit-transition: opacity 0.25s ease, -webkit-transform 0.25s ease;
   -webkit-transform: scale(1);
   opacity: 1;
   -webkit-animation: none !important;
+}
+
+.dots-leave.dots-leave-active:last-child {
+  -webkit-transform: translateX(2rem);
 }
 
 .dots-leave.dots-leave-active {
