@@ -29,6 +29,8 @@ section .pure-g {
 }
 
 .dot {
+  transition: opacity 0.2s ease,
+    -webkit-transform 0.3s cubic-bezier(0.070, 0.160, 0.530, 1.520);
   height: 0.9rem;
   width: 0.9rem;
   display: inline-block;
@@ -51,4 +53,21 @@ section .pure-g {
 
 .buffer .dot {
   margin: 0 0.1rem;
+}
+
+.dots-enter {
+  -webkit-transform: scale(0.1);
+  opacity: 0.01;
+}
+.dots-enter.dots-enter-active {
+  -webkit-transform: scale(1.3);
+  opacity: 1;
+}
+
+.dots-leave {
+  opacity: 1;
+}
+
+.dots-leave.dots-leave-active {
+  opacity: 0.01;
 }
