@@ -9,6 +9,8 @@
 
 (enable-console-print!)
 
+(def css-transition-group (-> js/React (aget "addons") (aget "CSSTransitionGroup")))
+
 ;;
 ;; -- Force core.async channels and buffers to reveal their state --
 ;;
@@ -51,10 +53,10 @@
   (reify
     om/IRender
     (render [_]
-      (if (empty? buf)
-        (dom/span #js { :className "buffer empty" } "empty")
-        (apply dom/span #js { :className "buffer" }
-                 (om/build-all color buf))))))
+            (css-transition-group
+             (clj->js { :className "buffer"
+                        :transitionName "dots"
+                        :children (map #(om/build color %) buf)})))))
 
 (defn channel [ch owner]
   (reify
@@ -73,7 +75,7 @@
     om/IRender
     (render [_]
       (let [ ch (:ch data)]
-        (dom/div #js { :className "text-center" }
+        (dom/div #js { :className "example-container" }
                  (dom/div #js { :className "text-center controls" }
                           (dom/button
                            #js { :className "pure-button"
@@ -82,8 +84,16 @@
                                             (om/refresh! owner)) }
 
                            (dom/code nil ">! ch " (om/build color :red))))
-                 (dom/div #js { :className "chanel" }
-                          (om/build channel (reveal ch))))))))
+                 (dom/div #js { :className "channel-container" }
+                          (om/build channel (reveal ch)))
+
+                 (dom/div #js { :className "text-center controls " }
+                          (dom/button
+                           #js { :className "pure-button"
+                                 :onClick (fn [_]
+                                            (async/take! ch #(prn %))
+                                            (om/refresh! owner))}
+                           (dom/code nil "<! ch"))))))))
 
 (om/root example-one
          (atom { :ch (chan (async/buffer 5)) })
