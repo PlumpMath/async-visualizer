@@ -30,17 +30,18 @@
 
        :else        (recur (z/next zip))))))
 
-(defn replace-button [b] :button)
+(defn replace-button [form] :button-form)
 
 (defn wrap-form [f]
-  (conj f :hello))
+  (case (first f)
+    'button (replace-button f)
+    f))
 
 (defn display-forms [forms chs]
   (loop [zip (z/seq-zip forms)]
     (let [n (z/node zip)]
       (cond
-       (z/end? zip) (z/root zip)
-       (= n 'button) (recur (-> zip z/up (z/edit replace-button) z/next))
+       (z/end? zip)  (z/root zip)
        (seq? n)      (recur (-> zip (z/edit wrap-form) z/next))
        :else         (recur (z/next zip))))))
 

@@ -6,7 +6,7 @@
             [ cljs.core.async.impl.buffers   :as buffers    ]
             [ cljs.core.async.impl.channels  :as channels  ])
   (:require-macros [cljs.core.async.macros :refer [ go ]]
-                   [async-visualizer.core :refer [ defexample ]]))
+                   #_[async-visualizer.core :refer [ defexample ]]))
 
 (enable-console-print!)
 
