@@ -1,11 +1,12 @@
 (ns async-visualizer.core
   (:require [ om.core :as om  :include-macros true ]
             [ om.dom  :as dom :include-macros true ]
-            [ cljs.core.async :as async :refer [<! >! chan] ]
+            [ cljs.core.async :as async :refer [<! >! chan put!] ]
             [ cljs.core.async.impl.protocols :as protocols ]
             [ cljs.core.async.impl.buffers   :as buffers    ]
             [ cljs.core.async.impl.channels  :as channels  ])
-  (:require-macros [cljs.core.async.macros :refer [ go ]]))
+  (:require-macros [cljs.core.async.macros :refer [ go ]]
+                   [async-visualizer.core :refer [ defexample ]]))
 
 (enable-console-print!)
 
@@ -55,6 +56,22 @@
 ;;
 
 
+
+(defn pure-button [click & body]
+  (apply dom/button #js { :className "pure-button"
+                          :onClick click } body))
+
+(defn pure-grid-str [s t]
+  (if (= t 5)
+    (str "pure-u-" s "-5")
+    (str "pure-u-" (* s (/ 24 t)) "-24")))
+
+(defn pure-grid [ col-map & body ]
+  (let [ttl (apply + col-map)]
+    (apply dom/div #js { :className "pure-grid" }
+           (map #(dom/div #js { :className (pure-grid-str %1 ttl) } %2)
+                col-map body))))
+
 (defn color [color owner]
   (om/component
    (let [c (or (:color color) color)]
@@ -88,22 +105,13 @@
     om/IRenderState
     (render-state [_ state]
       (let [ ch (:ch data)
-             res (:result state)]
+             res (:result state)
+             put-dot (fn [color] (fn [_] (put! ch (dot color))))]
         (dom/div #js { :className "example-root" }
                  (dom/div #js { :className "controls" }
-                          (dom/button
-                           #js { :className "pure-button"
-                                 :onClick (fn [_]
-                                            (async/put! ch (dot :red))
-                                            (om/refresh! owner)) }
-
+                          (pure-button (put-dot :red)
                            (dom/code nil ">! ch " (om/build color (dot :red))))
-                          (dom/button
-                           #js { :className "pure-button"
-                                 :onClick (fn [_]
-                                            (async/put! ch (dot :blue))
-                                            (om/refresh! owner))}
-
+                          (pure-button (put-dot :blue)
                            (dom/code nil ">! ch " (om/build color (dot :blue)))))
                  (dom/div #js { :className "channel-container" } "(chan)")
                  (dom/div #js { :className "result-container" }
